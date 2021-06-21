@@ -18,7 +18,3 @@ steps:
     arguments:
       image: 'centos8'
       commands:
-        - setup/ci_bootstrap.sh
-        - make init
-        - make ci
-        - make test
