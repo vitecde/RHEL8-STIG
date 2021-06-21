@@ -3,6 +3,7 @@ stages:
 - checkout
 - build
 steps:
+<<<<<<< HEAD
   clone:
     title: Cloning main repository...
     type: git-clone
@@ -18,3 +19,18 @@ steps:
     working_directory: {{clone}}
     tag: 'master'
     dockerfile: Dockerfile
+=======
+  checkout:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: "${{CF_REVISION}}"
+    stage: "checkout"
+  build:
+    title: Running docker image
+    type: freestyle
+    working_directory: '${{CF_REPO_NAME}}'
+    arguments:
+      image: 'centos8'
+      commands:
+>>>>>>> 9077f042069f089786ce5e4fdc80478499a9e05c
