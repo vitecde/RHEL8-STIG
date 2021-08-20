@@ -898,12 +898,13 @@
   lineinfile:
       path: '{{ rhel8stig_sssd_conf }}'
       regexp: '^certificate_verification = {{ item.regexp }}'
+      line: '{{ item.line }}'
       state: "{{ item.state }}"
   with_items:
-      - { regexp: 'no_ocsp, no_verification', state: absent }
-      - { regexp: 'no_ocsp', state: absent }
-      - { regexp: 'no_verification', state: absent }
-      - { regexp: 'ocsp_dgst=sha1', state: present }
+      - { regexp: 'no_ocsp, no_verification', state: absent, line: '' }
+      - { regexp: 'no_ocsp', state: absent, line: '' }
+      - { regexp: 'no_verification', state: absent, line: '' }
+      - { regexp: 'ocsp_dgst=sha1', state: present, line: 'certificate_verification = ocsp_dgst=sha1' }
   notify: restart sssd
   when:
       - rhel8stig_sssd_conf_present.stat.exists
