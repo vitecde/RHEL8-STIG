@@ -3761,7 +3761,7 @@
 - name: "MEDIUM | RHEL8-08-020180 | PATCH | RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/shadow."
   block:
       - name: "MEDIUM | RHEL8-08-020180 | AUDIT | RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/shadow. | Get list of users"
-        command: "awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ && $4 < 1 {print $1}' /etc/shadow"
+        command: "/usr/bin/awk -F: 'FILENAME == \"/etc/passwd\" { if ($3 >= 1000 && 65534 != $3 || $3 == 0 ) users[$1] } FILENAME == \"/etc/shadow\" { if ($1 in users && $4 < 1) badusers[$1]; } END { if (length(badusers) > 0){ for (user in badusers) {print user} } }' /etc/passwd /etc/shadow"
         changed_when: false
         failed_when: false
         register: rhel_08_020180_users
