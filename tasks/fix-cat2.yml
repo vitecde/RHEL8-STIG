@@ -974,6 +974,9 @@
 
       - name: "MEDIUM | RHEL-08-010421 | PATCH | RHEL 8 must clear the page allocator to prevent use-after-free attacks. | Set page poison 1 as active"
         shell: grubby --update-kernel=ALL --args="page_poison=1"
+        when:
+            - (ansible_proc_cmdline.page_poison is defined and ansible_proc_cmdline.page_poison != '1') or
+              (ansible_proc_cmdline.page_poison is not defined)
 
       - name: "MEDIUM | RHEL-08-010421 | PATCH | RHEL 8 must clear the page allocator to prevent use-after-free attacks. | Set page poison 1 for kernel updates if doesn't exist"
         lineinfile:
