@@ -1718,15 +1718,15 @@
   mount:
       path: /home
       state: mounted
-      src: "{{ home_mount.device }}"
+      src: "{{ home_mount.source }}"
       fstype: "{{ home_mount.fstype }}"
       opts: "{{ home_mount.options }},nosuid"
   when:
       - rhel_08_010570
-      - ansible_mounts | selectattr('mount', 'match', '^/home$') | list | length != 0
+      - fstab_mounts | selectattr('target', 'match', '^/home$') | list | length != 0
       - "'nosuid' not in home_mount.options"
   vars:
-      home_mount: "{{ ansible_mounts | json_query('[?mount == `/home`] | [0]') }}"
+      home_mount: "{{ fstab_mounts | json_query('[?target == `/home`] | [0]') }}"
   tags:
       - RHEL-08-010570
       - CAT2
@@ -1741,15 +1741,15 @@
   mount:
       path: /boot
       state: mounted
-      src: "{{ boot_mount.device }}"
+      src: "{{ boot_mount.source }}"
       fstype: "{{ boot_mount.fstype }}"
       opts: "{{ boot_mount.options }},nosuid"
   when:
       - rhel_08_010571
-      - ansible_mounts | selectattr('mount', 'match', '^/boot$') | list | length != 0
+      - fstab_mounts | selectattr('target', 'match', '^/boot$') | list | length != 0
       - "'nosuid' not in boot_mount.options"
   vars:
-      boot_mount: "{{ ansible_mounts | json_query('[?mount == `/boot`] | [0]') }}"
+      boot_mount: "{{ fstab_mounts | json_query('[?target == `/boot`] | [0]') }}"
   tags:
       - RHEL-08-010571
       - CAT2
@@ -1786,7 +1786,7 @@
 - name: "MEDIUM | RHEL-08-010580 | PATCH | RHEL 8 must prevent special devices on non-root local partitions."
   block:
       - name: "MEDIUM | RHEL-08-010580 | PATCH | RHEL 8 must prevent special devices on non-root local partitions. | Get mounts"
-        shell: mount | grep '^/dev\S* on /\S' | grep --invert-match 'nodev' | awk '{print $1,$3,$5,$6}' | sed 's/[()]//g'
+        shell: mount | grep '^/dev\S* on /\S' | awk '{print $1,$3,$5,$6}' | sed 's/[()]//g'
         args:
             warn: no
         changed_when: no
@@ -1816,16 +1816,19 @@
         mount:
             path: "{{ item.mpoint }}"
             state: mounted
-            src: "{{ item.device }}"
-            fstype: "{{ item.fs }}"
-            opts: "{{ item.opts }},nodev"
+            src: "{{ item_fstab_mount.source | default(item.device) }}"
+            fstype: "{{ item_fstab_mount.fstype | default(item.fs) }}"
+            opts: "{{ item_fstab_mount.options | default(item.opts) }},nodev"
+        vars:
+           item_fstab_mount_query: "[?target == '{{ item.mpoint }}'] | [0]"
+           item_fstab_mount: "{{ fstab_mounts | json_query(item_fstab_mount_query) }}"
         with_items:
             - "{{ rhel8stig_010580_mounts | default([]) }}"
         loop_control:
             label: "{{ item.mpoint }}"
         when:
             - item.device != "/"
-            - "'odev' not in item.opts"
+            - "(item_fstab_mount.options is defined and 'nodev' not in item_fstab_mount.options) or ('nodev' not in item.opts)"
             - rhel8stig_010580_mounts_nodev.stdout | length > 0
   when:
       - rhel_08_010580
@@ -1842,15 +1845,15 @@
   mount:
       path: /home
       state: mounted
-      src: "{{ home_mount.device }}"
+      src: "{{ home_mount.source }}"
       fstype: "{{ home_mount.fstype }}"
       opts: "{{ home_mount.options }},{% if rhel_08_010570 is sameas true %}nosuid,{% endif %}noexec"
   when:
       - rhel_08_010590
-      - ansible_mounts | selectattr('mount', 'match', '^/home$') | list | length != 0
+      - fstab_mounts | selectattr('target', 'match', '^/home$') | list | length != 0
       - "'noexec' not in home_mount.options"
   vars:
-      home_mount: "{{ ansible_mounts | json_query('[?mount == `/home`] | [0]') }}"
+      home_mount: "{{ fstab_mounts | json_query('[?target == `/home`] | [0]') }}"
   tags:
       - RHEL-08-010590
       - CAT2
@@ -6083,11 +6086,11 @@
         mount:
             path: /tmp
             state: mounted
-            src: "{{ tmp_mount.device }}"
+            src: "{{ tmp_mount.source }}"
             fstype: xfs
             opts: "defaults{{ rhel_08_040123 | ternary (',nodev', '') }}{{ rhel_08_040124 | ternary (',nosuid', '') }}{{ rhel_08_040125 | ternary (',noexec', '') }}"
         vars:
-            tmp_mount: "{{ ansible_mounts | json_query('[?mount == `/tmp`] | [0]') }}"
+            tmp_mount: "{{ fstab_mounts | json_query('[?target == `/tmp`] | [0]') }}"
         when: rhel8stig_040123_dev_status.stdout | length > 0
 
   when:
@@ -6130,11 +6133,11 @@
         mount:
             path: /var/log
             state: mounted
-            src: "{{ var_log_mount.device }}"
+            src: "{{ var_log_mount.source }}"
             fstype: xfs
             opts: "defaults{{ rhel_08_040126 | ternary (',nodev', '') }}{{ rhel_08_040127 | ternary (',nosuid', '') }}{{ rhel_08_040128 | ternary (',noexec', '') }}"
         vars:
-            var_log_mount: "{{ ansible_mounts | json_query('[?mount == `/var/log`] | [0]') }}"
+            var_log_mount: "{{ fstab_mounts | json_query('[?target == `/var/log`] | [0]') }}"
         when: rhel8stig_040126_var_log_status.stdout | length > 0
   when:
       - rhel_08_040126 or
@@ -6176,11 +6179,11 @@
         mount:
             path: /var/log/audit
             state: mounted
-            src: "{{ audit_mount.device }}"
+            src: "{{ audit_mount.source }}"
             fstype: xfs
             opts: "defaults{{ rhel_08_040129 | ternary (',nodev', '') }}{{ rhel_08_040130 | ternary (',nosuid', '') }}{{ rhel_08_040131 | ternary (',noexec', '') }}"
         vars:
-            audit_mount: "{{ ansible_mounts | json_query('[?mount == `/var/log/audit`] | [0]') }}"
+            audit_mount: "{{ fstab_mounts | json_query('[?target == `/var/log/audit`] | [0]') }}"
         when: rhel8stig_040129_var_log_audit_status.stdout | length > 0
   when:
       - rhel_08_040129 or
@@ -6222,11 +6225,11 @@
         mount:
             path: /var/tmp
             state: mounted
-            src: "{{ var_tmp_mount.device }}"
+            src: "{{ var_tmp_mount.source }}"
             fstype: xfs
             opts: "defaults{{ rhel_08_040132 | ternary (',nodev', '') }}{{ rhel_08_040133 | ternary (',nosuid', '') }}{{ rhel_08_040134 | ternary (',noexec', '') }}"
         vars:
-            var_tmp_mount: "{{ ansible_mounts | json_query('[?mount == `/var/tmp`] | [0]') }}"
+            var_tmp_mount: "{{ fstab_mounts | json_query('[?target == `/var/tmp`] | [0]') }}"
         when: rhel8stig_040132_var_tmp_status.stdout | length > 0
   when:
       - rhel_08_040132 or

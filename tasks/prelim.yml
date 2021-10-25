@@ -99,6 +99,21 @@
   tags:
       - always
 
+- name: "PRELIM | Gather mount information from fstab"
+  command: findmnt --fstab 
+  register: findmnt_stdout
+  failed_when: findmnt_stdout.rc > 1
+  changed_when: false
+  tags:
+      - always
+  
+- name: "PRELIM | Gather mount information from fstab"
+  set_fact:
+      fstab_mounts: "{{ fstab_mounts | default([]) + [dict(((findmnt_stdout.stdout_lines[0] | lower).split())|zip(item.split()))] }}"
+  loop: "{{ findmnt_stdout.stdout_lines[1:] }}"
+  tags:
+      - always
+
 - name: ensure cronie is available
   dnf:
       name: cronie
