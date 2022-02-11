@@ -561,24 +561,24 @@
   block:
       - name: "MEDIUM | RHEL-08-020025 | PATCH | 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/system-auth file. | Set preauth"
         lineinfile:
-            path: /etc/pam.d/system-auth
-            regexp: '^auth       required pam_faillock.so preauth'
-            line: "auth       required pam_faillock.so preauth dir={{ rhel8stig_pam_faillock.dir }} silent audit deny={{ rhel8stig_pam_faillock.attempts }}{{ (rhel8stig_pam_faillock.fail_for_root) | ternary(' even_deny_root ',' ') }}fail_interval={{ rhel8stig_pam_faillock.interval }} unlock_time={{ rhel8stig_pam_faillock.unlock_time }}"
-            insertafter: '^auth'
+            path: "/etc/pam.d/system-auth"
+            regexp: '^auth\s+required pam_faillock.so preauth'
+            line: 'auth       required pam_faillock.so preauth'
+            insertbefore: '^auth.*pam_unix.so'
         notify: restart sssd
 
       - name: "MEDIUM | RHEL-08-020025 | PATCH | 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/system-auth file. | Set authfail"
         lineinfile:
-            path: /etc/pam.d/system-auth
-            regexp: '^auth       required pam_faillock.so authfail'
-            line: 'auth       required pam_faillock.so authfail dir={{ rhel8stig_pam_faillock.dir }} unlock_time={{ rhel8stig_pam_faillock.unlock_time }}'
-            insertafter: '^auth'
+            path: "/etc/pam.d/system-auth"
+            regexp: '^auth\s+required pam_faillock.so authfail'
+            line: 'auth       required pam_faillock.so authfail'
+            insertafter: '^auth.*pam_unix.so'
         notify: restart sssd
 
       - name: "MEDIUM | RHEL-08-020025 | PATCH | 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/system-auth file. | Set account faillock"
         lineinfile:
-            path: /etc/pam.d/system-auth
-            regexp: '^account    required pam_faillock.so'
+            path: "/etc/pam.d/system-auth"
+            regexp: '^account\s+required pam_faillock.so'
             line: 'account    required pam_faillock.so'
             insertafter: '^account'
         notify: restart sssd
@@ -597,24 +597,24 @@
   block:
       - name: "MEDIUM | RHEL-08-020026 | PATCH | RHEL 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/password-auth file. | Set preauth"
         lineinfile:
-            path: /etc/pam.d/password-auth
-            regexp: '^auth       required pam_faillock.so preauth'
-            line: "auth       required pam_faillock.so preauth dir={{ rhel8stig_pam_faillock.dir }} silent audit deny={{ rhel8stig_pam_faillock.attempts }}{{ (rhel8stig_pam_faillock.fail_for_root) | ternary(' even_deny_root ',' ') }}fail_interval={{ rhel8stig_pam_faillock.interval }} unlock_time={{ rhel8stig_pam_faillock.unlock_time }}"
-            insertafter: '^auth'
+            path: "/etc/pam.d/password-auth"
+            regexp: '^auth\s+required pam_faillock.so preauth'
+            line: 'auth       required pam_faillock.so preauth'
+            insertbefore: '^auth.*pam_unix.so'
         notify: restart sssd
 
       - name: "MEDIUM | RHEL-08-020026 | PATCH | RHEL 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/password-auth file. | Set authfail"
         lineinfile:
-            path: /etc/pam.d/password-auth
-            regexp: '^auth       required pam_faillock.so authfail'
-            line: 'auth       required pam_faillock.so authfail dir={{ rhel8stig_pam_faillock.dir }} unlock_time={{ rhel8stig_pam_faillock.unlock_time }}'
-            insertafter: '^auth'
+            path: "/etc/pam.d/password-auth"
+            regexp: '^auth\s+required pam_faillock.so authfail'
+            line: 'auth       required pam_faillock.so authfail'
+            insertafter: '^auth.*pam_unix.so'
         notify: restart sssd
 
       - name: "MEDIUM | RHEL-08-020026 | PATCH | RHEL 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/password-auth file. | Set account faillock"
         lineinfile:
-            path: /etc/pam.d/password-auth
-            regexp: '^account    required pam_faillock.so'
+            path: "/etc/pam.d/password-auth"
+            regexp: '^account\s+required pam_faillock.so'
             line: 'account    required pam_faillock.so'
             insertafter: '^account'
         notify: restart sssd
