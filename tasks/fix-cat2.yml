@@ -95,20 +95,20 @@
         with_items:
             - /etc/issue
             - /etc/issue.net
-        when:
-            # - not system_is_ec2
-            - rhel_08_010040 or
-              rhel_08_010060
-        tags:
-            - CAT2
-            - RHEL-08-010040
-            - RHEL-08-010060
-            - CCI-000048
-            - SRG-OS-000023-GPOS-00006
-            - SV-230225r627750_rule
-            - SV-230227r627750_rule
-            - V-230225
-            - V-230227
+  when:
+      # - not system_is_ec2
+      - rhel_08_010040 or
+        rhel_08_010060
+  tags:
+      - CAT2
+      - RHEL-08-010040
+      - RHEL-08-010060
+      - CCI-000048
+      - SRG-OS-000023-GPOS-00006
+      - SV-230225r627750_rule
+      - SV-230227r627750_rule
+      - V-230225
+      - V-230227
 
 - name: "MEDIUM | RHEL-08-010049 | PATCH | RHEL 8 must display a banner before granting local or remote access to the system via a graphical user logon"
   lineinfile:
