@@ -6000,13 +6000,17 @@
 - name: "MEDIUM | RHEL-08-040111 | PATCH | RHEL 8 Bluetooth must be disabled."
   lineinfile:
       path: /etc/modprobe.d/bluetooth.conf
-      regexp: '^install bluetooth '
-      line: "install bluetooth /bin/true"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
       create: yes
       owner: root
       group: root
       mode: 0640
+      insertafter: "{{ item.insertafter }}"
   notify: change_requires_reboot
+  with_items:
+      - { regexp: '^install bluetooth', line: 'install bluetooth /bin/true', insertafter: 'EOF' }
+      - { regexp: '^blacklist bluetooth', line: 'blacklist bluetooth', insertafter: '^install bluetooth' }
   when:
       - rhel_08_040111
       - not system_is_container
