@@ -1843,15 +1843,15 @@
   ansible.posix.mount:
       path: /boot/efi
       state: mounted
-      src: "{{ boot_efi_mount.device }}"
+      src: "{{ boot_efi_mount.source }}"
       fstype: "{{ boot_efi_mount.fstype }}"
       opts: "{{ boot_efi_mount.options }},nosuid"
   when:
       - rhel_08_010572
-      - ansible_mounts | selectattr('mount', 'match', '^/boot/efi$') | list | length != 0
+      - fstab_mounts | selectattr('target', 'match', '^/boot/efi$') | list | length != 0
       - "'nosuid' not in boot_efi_mount.options"
   vars:
-      boot_efi_mount: "{{ ansible_mounts | json_query('[?mount == `/boot/efi`] | [0]') }}"
+      boot_efi_mount: "{{ fstab_mounts | json_query('[?target == `/boot/efi`] | [0]') }}"
   tags:
       - RHEL-08-010572
       - CAT2
