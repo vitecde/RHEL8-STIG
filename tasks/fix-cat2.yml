@@ -6785,7 +6785,7 @@
       - name: "MEDIUM | RHEL-08-040230 | PATCH | The RHEL 8 must not respond to Internet Control Message Protocol (ICMP) echoes sent to a broadcast address. | Use template to create file"
         ansible.posix.sysctl:
             name: net.ipv4.icmp_echo_ignore_broadcasts
-            value: 0
+            value: 1
             state: present
             reload: "{{ rhel8stig_sysctl_reload }}"
             sysctl_set: true
