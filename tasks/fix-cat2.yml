@@ -5831,7 +5831,7 @@
   notify: change_requires_reboot
   with_items:
       - { regexp: '##Disable WebCam', line: '##Disable WebCam', insertafter: 'EOF' }
-      - { regexp: '^install uvcvideo', line: 'install uvcvideo /bin/true', insertafter: '##Disable WebCam' }
+      - { regexp: '^install uvcvideo', line: 'install uvcvideo /bin/false', insertafter: '##Disable WebCam' }
       - { regexp: '^blacklist uvcvideo', line: 'blacklist uvcvideo', insertafter: '##Disable WebCam' }
   when:
       - rhel_08_040020
@@ -5976,7 +5976,7 @@
       group: root
       mode: 0640
   with_items:
-      - { regexp: '^install usb-storage', line: 'install usb-storage /bin/true', insertafter: 'EOF' }
+      - { regexp: '^install usb-storage', line: 'install usb-storage /bin/false', insertafter: 'EOF' }
       - { regexp: '^blacklist usb-storage', line: 'blacklist usb-storage', insertafter: '#blacklist usb-storage'}
   when:
       - rhel_08_040080
@@ -6173,7 +6173,7 @@
         ansible.builtin.lineinfile:
             path: /etc/modprobe.d/bluetooth.conf
             regexp: '^install bluetooth '
-            line: "install bluetooth /bin/true"
+            line: "install bluetooth /bin/false"
             create: true
             owner: root
             group: root

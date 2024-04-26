@@ -475,8 +475,8 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install atm', line: 'install atm /bin/true', insertafter: 'EOF' }
-      - { regexp: '^blacklist atm', line: 'blacklist atm', insertafter: '^install atm /bin/true' }
+      - { regexp: '^install atm', line: 'install atm /bin/false', insertafter: 'EOF' }
+      - { regexp: '^blacklist atm', line: 'blacklist atm', insertafter: '^install atm /bin/false' }
   when:
       - rhel_08_040021
   tags:
@@ -501,8 +501,8 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install can', line: 'install can /bin/true', insertafter: 'EOF' }
-      - { regexp: 'blacklist can', line: 'blacklist can', insertafter: '^install can /bin/true' }
+      - { regexp: '^install can', line: 'install can /bin/false', insertafter: 'EOF' }
+      - { regexp: 'blacklist can', line: 'blacklist can', insertafter: '^install can /bin/false' }
   when:
       - rhel_08_040022
   tags:
@@ -527,7 +527,7 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install sctp', line: 'install sctp /bin/true', insertafter: 'EOF' }
+      - { regexp: '^install sctp', line: 'install sctp /bin/false', insertafter: 'EOF' }
       - { regexp: '^blacklist sctp', line: 'blacklist sctp', insertafter: '^install sctp' }
   when:
       - rhel_08_040023
@@ -553,7 +553,7 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install tipc', line: 'install tipc /bin/true', insertafter: 'EOF' }
+      - { regexp: '^install tipc', line: 'install tipc /bin/false', insertafter: 'EOF' }
       - { regexp: '^blacklist tipc', line: 'blacklist tipc', insertafter: '^install tipc' }
   when:
       - rhel_08_040024
@@ -579,7 +579,7 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install cramfs', line: 'install cramfs /bin/true', insertafter: 'EOF' }
+      - { regexp: '^install cramfs', line: 'install cramfs /bin/false', insertafter: 'EOF' }
       - { regexp: 'blacklist cramfs', line: 'blacklist cramfs', insertafter: '^install cramfs' }
   when:
       - rhel_08_040025
@@ -605,7 +605,7 @@
       mode: 0640
   notify: change_requires_reboot
   with_items:
-      - { regexp: '^install firewire-core', line: 'install firewire-core /bin/true', insertafter: 'EOF' }
+      - { regexp: '^install firewire-core', line: 'install firewire-core /bin/false', insertafter: 'EOF' }
       - { regexp: '^blacklist firewire-core', line: 'blacklist firewire-core', insertafter: '^install firewire-core' }
   when:
       - rhel_08_040026
